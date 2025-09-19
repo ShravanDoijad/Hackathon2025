@@ -9,6 +9,7 @@ import Companies from './pages/Companies.jsx'
 import Profile from './pages/Profile.jsx'
 import Recommendations from './pages/Recommendations.jsx'
 import Features from './pages/Features.jsx'
+import AIDemo from './components/AIDemo.jsx'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
@@ -25,7 +26,8 @@ function App() {
           <Route path="/companies" element={<Companies />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/recommendations" element={<Recommendations />} />
-          <Route path="/features" element={<Features />} />
+          <Route path="/ai-demo" element={<AIDemo />} />
+          <Route path="/#features" element={<Features />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" toastOptions={{

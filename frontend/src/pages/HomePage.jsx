@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
 // Simple placeholder auth state; replace with real auth from context/store later
 const useAuth = () => {
-  // toggle to false to simulate logged-out
   const isAuthenticated = false;
-  const user = isAuthenticated ? { name: 'Aarav Sharma' } : null;
+  const user = isAuthenticated ? { name: "Aarav Sharma" } : null;
   return { isAuthenticated, user };
 };
 
@@ -16,128 +15,265 @@ const metricsPlaceholder = {
 
 const featuredCompaniesPlaceholder = [
   {
-    id: 'comp-1',
-    name: 'TCS (Tata Consultancy Services)',
-    logo: 'https://logos-world.net/wp-content/uploads/2021/08/TCS-Logo.png',
-    roles: ['Full‑Stack Intern', 'Data Analyst Intern'],
-    tags: ['IT Services', 'Global', 'Graduate Friendly'],
+    id: "comp-1",
+    name: "TCS (Tata Consultancy Services)",
+    logo: "https://logos-world.net/wp-content/uploads/2021/08/TCS-Logo.png",
+    roles: ["FullStack Intern", "Data Analyst Intern"],
+    tags: ["IT Services", "Global", "Graduate Friendly"],
   },
   {
-    id: 'comp-2',
-    name: 'Infosys',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/6/60/Infosys_logo.svg',
-    roles: ['AI/ML Intern', 'UI/UX Intern'],
-    tags: ['Consulting', 'Cloud', 'Design'],
+    id: "comp-2",
+    name: "Infosys",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/6/60/Infosys_logo.svg",
+    roles: ["AI/ML Intern", "UI/UX Intern"],
+    tags: ["Consulting", "Cloud", "Design"],
   },
   {
-    id: 'comp-3',
-    name: 'Wipro',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Wipro_Primary_Logo_Color_RGB.svg',
-    roles: ['Cybersecurity Intern', 'DevOps Intern'],
-    tags: ['Enterprise', 'Security', 'Automation'],
+    id: "comp-3",
+    name: "Wipro",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/7/79/Wipro_Primary_Logo_Color_RGB.svg",
+    roles: ["Cybersecurity Intern", "DevOps Intern"],
+    tags: ["Enterprise", "Security", "Automation"],
   },
   {
-    id: 'comp-4',
-    name: 'Accenture',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Accenture.svg',
-    roles: ['Strategy Intern', 'Data Engineering Intern'],
-    tags: ['Consulting', 'Strategy', 'Analytics'],
+    id: "comp-4",
+    name: "Accenture",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Accenture.svg",
+    roles: ["Strategy Intern", "Data Engineering Intern"],
+    tags: ["Consulting", "Strategy", "Analytics"],
   },
   {
-    id: 'comp-5',
-    name: 'MCA Partner Startup',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png',
-    roles: ['Product Intern', 'Backend Intern'],
-    tags: ['Startup', 'Impact', 'Fast‑paced'],
+    id: "comp-5",
+    name: "MCA Partner Startup",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png",
+    roles: ["Product Intern", "Backend Intern"],
+    tags: ["Startup", "Impact", "Fastpaced"],
   },
   {
-    id: 'comp-6',
-    name: 'Deloitte',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Deloitte_Logo.png',
-    roles: ['Risk Advisory Intern', 'Data Viz Intern'],
-    tags: ['Advisory', 'Data', 'Finance'],
+    id: "comp-6",
+    name: "Deloitte",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/5/59/Deloitte_Logo.png",
+    roles: ["Risk Advisory Intern", "Data Viz Intern"],
+    tags: ["Advisory", "Data", "Finance"],
   },
 ];
 
-const GradientText = ({ children }) => (
-  <span style={{
-    background: 'linear-gradient(90deg, #6EE7F9 0%, #A78BFA 40%, #F472B6 80%)',
-    WebkitBackgroundClip: 'text',
-    backgroundClip: 'text',
-    color: 'transparent',
-  }}>{children}</span>
+// --- Matching data and helpers ---
+const sampleCompaniesForMatching = [
+  { id: "r1", name: "TCS", role: "FullStack Intern", requiredSkills: ["JavaScript", "React", "Node.js"], location: "Remote" },
+  { id: "r2", name: "Infosys", role: "AI/ML Intern", requiredSkills: ["Python", "Pandas", "Machine Learning"], location: "Bengaluru" },
+  { id: "r3", name: "Wipro", role: "DevOps Intern", requiredSkills: ["Linux", "Docker", "CI/CD"], location: "Hyderabad" },
+  { id: "r4", name: "Accenture", role: "Data Analyst Intern", requiredSkills: ["SQL", "Excel", "Power BI"], location: "Gurugram" },
+  { id: "r5", name: "MCA Startup", role: "Frontend Intern", requiredSkills: ["JavaScript", "React", "Tailwind"], location: "Pune" },
+  { id: "r6", name: "Deloitte", role: "Data Viz Intern", requiredSkills: ["Power BI", "SQL", "Python"], location: "Mumbai" },
+];
+
+const pastStudents = [
+  { id: "s1", name: "Ananya Verma", avatar: "https://i.pravatar.cc/80?img=5", skills: ["React", "Node.js"], company: "TCS", role: "FullStack Intern", year: 2024, email: "ananya@example.com" },
+  { id: "s2", name: "Rohit Menon", avatar: "https://i.pravatar.cc/80?img=12", skills: ["Python", "Machine Learning"], company: "Infosys", role: "AI/ML Intern", year: 2023, email: "rohit@example.com" },
+  { id: "s3", name: "Sara Khan", avatar: "https://i.pravatar.cc/80?img=32", skills: ["SQL", "Power BI"], company: "Accenture", role: "Data Analyst Intern", year: 2024, email: "sara@example.com" },
+];
+
+const getStudentProfile = () => {
+  try {
+    const raw = sessionStorage.getItem("studentProfile");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const matchScore = (studentSkills, requiredSkills) => {
+  const have = new Set((studentSkills || []).map(s => s.toLowerCase()));
+  const need = (requiredSkills || []).map(s => s.toLowerCase());
+  const matched = need.filter(s => have.has(s));
+  const missing = need.filter(s => !have.has(s));
+  const score = need.length === 0 ? 0 : Math.round((matched.length / need.length) * 100);
+  return { score, matched, missing };
+};
+
+// Design System Components
+const Card = ({ children, style = {} }) => (
+  <div style={{
+    background: "#ffffff",
+    border: "1px solid #e5e7eb",
+    borderRadius: 12,
+    padding: 24,
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+    ...style
+  }}>
+    {children}
+  </div>
 );
 
-const Stat = ({ label, value, accent }) => (
-  <div style={{
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: 16,
-    padding: '18px 20px',
-    backdropFilter: 'blur(6px)',
-    minWidth: 160,
-  }}>
-    <div style={{ fontSize: 26, fontWeight: 800, color: accent }}>{value.toLocaleString()}</div>
-    <div style={{ fontSize: 13, color: '#c7c7d3', marginTop: 4 }}>{label}</div>
-  </div>
+const PrimaryButton = ({ children, href, onClick, style = {} }) => {
+  const ButtonContent = () => (
+    <button style={{
+      background: "#3b82f6",
+      color: "#ffffff",
+      border: "none",
+      borderRadius: 8,
+      padding: "12px 24px",
+      fontSize: 16,
+      fontWeight: 600,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      ...style
+    }} onClick={onClick}>
+      {children}
+    </button>
+  );
+
+  return href ? <a href={href} style={{ textDecoration: "none" }}><ButtonContent /></a> : <ButtonContent />;
+};
+
+const SecondaryButton = ({ children, href, onClick, style = {} }) => {
+  const ButtonContent = () => (
+    <button style={{
+      background: "#f8fafc",
+      color: "#111827",
+      border: "1px solid #e5e7eb",
+      borderRadius: 8,
+      padding: "12px 24px",
+      fontSize: 16,
+      fontWeight: 600,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      ...style
+    }} onClick={onClick}>
+      {children}
+    </button>
+  );
+
+  return href ? <a href={href} style={{ textDecoration: "none" }}><ButtonContent /></a> : <ButtonContent />;
+};
+
+const StatCard = ({ label, value, icon }) => (
+  <Card style={{ textAlign: "center", padding: 20 }}>
+    <div style={{ fontSize: 32, fontWeight: 700, color: "#111827", marginBottom: 8 }}>{value.toLocaleString()}</div>
+    <div style={{ fontSize: 14, color: "#6b7280", fontWeight: 500 }}>{label}</div>
+    {icon && <div style={{ marginTop: 12, fontSize: 24 }}>{icon}</div>}
+  </Card>
 );
 
 const CompanyCard = ({ company }) => (
-  <div style={{
-    position: 'relative',
-    borderRadius: 18,
-    padding: 18,
-    background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-    border: '1px solid rgba(255,255,255,0.1)',
-    boxShadow: '0 10px 24px rgba(0,0,0,0.2)',
-    transition: 'transform 200ms ease, box-shadow 200ms ease',
-    cursor: 'pointer',
-  }}
-  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
-  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-  >
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+  <Card>
+    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
       <div style={{
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        background: '#0b1020',
-        display: 'grid',
-        placeItems: 'center',
-        overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.1)'
+        width: 48,
+        height: 48,
+        borderRadius: 8,
+        background: "#f8fafc",
+        display: "grid",
+        placeItems: "center",
+        overflow: "hidden",
+        border: "1px solid #e5e7eb"
       }}>
-        <img src={company.logo} alt={`${company.name} logo`} style={{ width: '70%', height: '70%', objectFit: 'contain' }} />
+        <img src={company.logo} alt={`${company.name} logo`} style={{ width: "70%", height: "70%", objectFit: "contain" }} />
       </div>
       <div>
-        <div style={{ fontWeight: 700, color: 'white' }}>{company.name}</div>
-        <div style={{ fontSize: 12, color: '#a8adc0', marginTop: 2 }}>{company.roles.join(' • ')}</div>
+        <div style={{ fontSize: 18, fontWeight: 600, color: "#111827", marginBottom: 4 }}>{company.name}</div>
+        <div style={{ fontSize: 14, color: "#6b7280" }}>{company.roles.join("  ")}</div>
       </div>
     </div>
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
       {company.tags.map(tag => (
         <span key={tag} style={{
-          fontSize: 11,
-          color: '#cfd3e6',
-          background: 'rgba(255,255,255,0.06)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          padding: '6px 10px',
-          borderRadius: 999,
+          fontSize: 12,
+          color: "#6b7280",
+          background: "#f8fafc",
+          border: "1px solid #e5e7eb",
+          padding: "4px 8px",
+          borderRadius: 6,
+          fontWeight: 500
         }}>{tag}</span>
       ))}
     </div>
-    <div aria-hidden="true" style={{
-      position: 'absolute',
-      inset: 0,
-      borderRadius: 18,
-      padding: 1,
-      background: 'linear-gradient(140deg, rgba(110,231,249,0.25), rgba(167,139,250,0.25), rgba(244,114,182,0.2))',
-      WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
-      WebkitMaskComposite: 'xor',
-      maskComposite: 'exclude',
-      pointerEvents: 'none'
-    }} />
-  </div>
+  </Card>
+);
+
+const Badge = ({ children, variant = "default" }) => {
+  const variants = {
+    default: { color: "#6b7280", bg: "#f8fafc", border: "#e5e7eb" },
+    success: { color: "#ffffff", bg: "#10b981", border: "#10b981" },
+    warning: { color: "#ffffff", bg: "#f59e0b", border: "#f59e0b" },
+    ai: { color: "#ffffff", bg: "#8b5cf6", border: "#8b5cf6" }
+  };
+  const style = variants[variant];
+  return (
+    <span style={{
+      fontSize: 12,
+      padding: "4px 8px",
+      borderRadius: 6,
+      background: style.bg,
+      color: style.color,
+      border: `1px solid ${style.border}`,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 4,
+      fontWeight: 500
+    }}>{children}</span>
+  );
+};
+
+const MatchCard = ({ item, studentSkills }) => {
+  const { score, missing } = useMemo(() => matchScore(studentSkills, item.requiredSkills), [studentSkills, item.requiredSkills]);
+  const isStrong = score >= 70 && missing.length <= 1;
+
+  return (
+    <Card>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "#111827" }}>{item.name}</div>
+          <Badge variant="ai"> AI</Badge>
+        </div>
+        <Badge variant={isStrong ? "success" : "default"}>{score}% match</Badge>
+      </div>
+      <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 12 }}>{item.role}  {item.location}</div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+        {item.requiredSkills.map(s => (
+          <Badge key={s} variant={(studentSkills || []).map(x=>x.toLowerCase()).includes(s.toLowerCase()) ? "default" : "warning"}>
+            {s}
+          </Badge>
+        ))}
+      </div>
+      {missing.length > 0 && (
+        <div style={{ fontSize: 12, color: "#f59e0b", marginBottom: 12 }}>Missing: {missing.join(", ")}</div>
+      )}
+      <div style={{ display: "flex", gap: 8 }}>
+        <PrimaryButton style={{ padding: "8px 16px", fontSize: 14 }}>Apply</PrimaryButton>
+        <SecondaryButton style={{ padding: "8px 16px", fontSize: 14 }}>Save</SecondaryButton>
+      </div>
+    </Card>
+  );
+};
+
+const StudentCard = ({ s }) => (
+  <Card>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+      <img src={s.avatar} alt={s.name} style={{ width: 40, height: 40, borderRadius: 8 }} />
+      <div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: "#111827" }}>{s.name}</div>
+        <div style={{ fontSize: 12, color: "#6b7280" }}>{s.role} @ {s.company}  {s.year}</div>
+      </div>
+    </div>
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+      {s.skills.map(k => <Badge key={k}>{k}</Badge>)}
+    </div>
+    <a href={`mailto:${s.email}`} style={{ textDecoration: "none" }}>
+      <SecondaryButton style={{ padding: "6px 12px", fontSize: 14, width: "100%" }}>Connect</SecondaryButton>
+    </a>
+  </Card>
+);
+
+const QuickAction = ({ label, value, href, icon, accent = "#3b82f6" }) => (
+  <a href={href} style={{ textDecoration: "none" }}>
+    <Card style={{ textAlign: "center", padding: 20 }}>
+      <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+      <div style={{ fontSize: 24, fontWeight: 700, color: accent, marginBottom: 4 }}>{value}</div>
+      <div style={{ fontSize: 14, color: "#6b7280", fontWeight: 500 }}>{label}</div>
+    </Card>
+  </a>
 );
 
 const HomePage = () => {
@@ -145,182 +281,254 @@ const HomePage = () => {
 
   const greet = useMemo(() => {
     const hours = new Date().getHours();
-    if (hours < 12) return 'Good morning';
-    if (hours < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hours < 12) return "Good morning";
+    if (hours < 18) return "Good afternoon";
+    return "Good evening";
   }, []);
+
+  // Read saved profile skills
+  const studentSkills = useMemo(() => {
+    const p = getStudentProfile();
+    return p?.skills || [];
+  }, []);
+
+  const sortedCompanies = useMemo(() => {
+    return [...sampleCompaniesForMatching].sort((a, b) => {
+      const sa = matchScore(studentSkills, a.requiredSkills).score;
+      const sb = matchScore(studentSkills, b.requiredSkills).score;
+      return sb - sa;
+    });
+  }, [studentSkills]);
+
+  const exactMatches = sortedCompanies.filter(c => matchScore(studentSkills, c.requiredSkills).missing.length === 0);
+  const nearMatches = sortedCompanies.filter(c => matchScore(studentSkills, c.requiredSkills).missing.length > 0);
+
+  // Dashboard stats (placeholder)
+  const applications = 6;
+  const profileViews = 128;
+  const matches = exactMatches.length;
+  const recommended = sortedCompanies.length;
 
   return (
     <div style={{
-      minHeight: '100dvh',
-      background: 'radial-gradient(1000px 600px at 10% -20%, #1e2a6e 0%, #0b1020 50%), radial-gradient(900px 500px at 100% 0%, #321f63 0%, rgba(11,16,32,0.6) 50%)',
-      color: 'white',
-      fontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif',
+      minHeight: "100vh",
+      background: "#ffffff",
+      color: "#111827",
+      fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
     }}>
       {/* Top nav */}
       <header style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '20px clamp(16px, 6vw, 48px)',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "24px 48px",
+        background: "#ffffff",
+        borderBottom: "1px solid #e5e7eb"
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 8, background: 'linear-gradient(135deg,#6EE7F9,#A78BFA)', display: 'grid', placeItems: 'center', fontWeight: 900, color: '#0b1020' }}>AI</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ 
+            width: 36, 
+            height: 36, 
+            borderRadius: 8, 
+            background: "#3b82f6", 
+            display: "grid", 
+            placeItems: "center", 
+            fontWeight: 700, 
+            color: "#ffffff",
+            fontSize: 16
+          }}></div>
           <div>
-            <div style={{ fontWeight: 800 }}>InternMatch</div>
-            <div style={{ fontSize: 11, color: '#b8bdd3' }}>SIH25033 — Ministry of Corporate Affairs</div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>InternMatch AI</div>
+            <div style={{ fontSize: 12, color: "#6b7280" }}>SIH25033 — Ministry of Corporate Affairs</div>
           </div>
         </div>
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {['Features','Companies','How it works','Contact'].map(item => (
-            <a key={item} href={`#${item.toLowerCase().replace(/ /g,'-')}`} style={{ color: '#cfd3e6', textDecoration: 'none', fontSize: 14 }}>{item}</a>
+        <nav style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          {["Features","Companies","How it works","Contact"].map(item => (
+            <a key={item} href={`#${item.toLowerCase().replace(/ /g,"-")}`} style={{ 
+              color: "#6b7280", 
+              textDecoration: "none", 
+              fontSize: 16,
+              fontWeight: 500
+            }}>{item}</a>
           ))}
           {isAuthenticated ? (
-            <button aria-label="Profile" title="Profile" style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              padding: '10px 14px', borderRadius: 999,
-              background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.12)'
-            }}>
-              <span style={{
-                width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#6EE7F9,#A78BFA)', display: 'inline-block'
-              }} />
-              <span style={{ fontSize: 14, fontWeight: 600 }}>{greet}, {user?.name?.split(' ')[0]}</span>
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", background: "#f8fafc", borderRadius: 8, border: "1px solid #e5e7eb" }}>
+              <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#3b82f6" }} />
+              <span style={{ fontSize: 14, fontWeight: 500 }}>{greet}, {user?.name?.split(" ")[0]}</span>
+            </div>
           ) : (
-            <div style={{ display: 'flex', gap: 10 }}>
-              <a href="/login" style={{ padding: '10px 14px', borderRadius: 999, color: '#cfd3e6', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.18)' }}>Log in</a>
-              <a href="/signup" style={{ padding: '10px 14px', borderRadius: 999, background: 'linear-gradient(135deg,#6EE7F9,#A78BFA)', color: '#0b1020', textDecoration: 'none', fontWeight: 800 }}>Sign up</a>
+            <div style={{ display: "flex", gap: 12 }}>
+              <SecondaryButton href="/login">Log in</SecondaryButton>
+              <PrimaryButton href="/signup">Sign up</PrimaryButton>
             </div>
           )}
         </nav>
       </header>
 
       {/* Hero */}
-      <section id="hero" style={{
-        padding: '10px clamp(16px, 6vw, 48px) 0',
-      }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1.15fr 0.85fr',
-          gap: 28,
-          alignItems: 'center',
-        }}>
-          <div style={{ padding: '0 clamp(16px, 6vw, 48px)' }}>
-            <h1 style={{ fontSize: 'clamp(28px, 4.6vw, 56px)', lineHeight: 1.08, margin: 0 }}>
-              AI‑Based <GradientText>Internship Recommendations</GradientText>
+      <section style={{ padding: "60px 48px 40px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 60 }}>
+            <h1 style={{ 
+              fontSize: "48px", 
+              fontWeight: 700, 
+              lineHeight: 1.2, 
+              margin: "0 0 24px 0",
+              color: "#111827"
+            }}>
+              AI-Powered <span style={{ color: "#3b82f6" }}>Internship Matching</span>
             </h1>
-            <p style={{ marginTop: 14, color: '#cfd3e6', fontSize: 'clamp(14px, 1.5vw, 18px)' }}>
-              Like Tinder for internships—swipe right on perfect matches. Students discover roles that fit their skills, and companies find vetted interns fast.
+            <p style={{ 
+              fontSize: "20px", 
+              color: "#6b7280", 
+              maxWidth: 600, 
+              margin: "0 auto 40px",
+              lineHeight: 1.6
+            }}>
+              Discover your perfect internship match with AI-driven recommendations, skill analysis, and personalized career insights.
             </p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 20, flexWrap: 'wrap' }}>
-              <a href="/student/onboarding" style={{ padding: '12px 18px', borderRadius: 12, background: 'linear-gradient(135deg,#6EE7F9,#A78BFA)', color: '#0b1020', fontWeight: 800, textDecoration: 'none' }}>Get started — I’m a Student</a>
-              <a href="/company/post" style={{ padding: '12px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.18)', color: 'white', textDecoration: 'none', fontWeight: 700 }}>Post an Internship</a>
-            </div>
-
-            <div style={{ display: 'flex', gap: 12, marginTop: 22, flexWrap: 'wrap' }}>
-              <Stat label="Registered Students" value={metricsPlaceholder.users} accent="#6EE7F9" />
-              <Stat label="Partner Companies" value={metricsPlaceholder.companies} accent="#A78BFA" />
-              <Stat label="Successful Matches" value={metricsPlaceholder.matches} accent="#F472B6" />
+            <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+              <PrimaryButton href="/student/onboarding" style={{ padding: "16px 32px", fontSize: 18 }}>
+                 Get Started
+              </PrimaryButton>
+              <SecondaryButton href="/recommendations" style={{ padding: "16px 32px", fontSize: 18 }}>
+                 View Recommendations
+              </SecondaryButton>
             </div>
           </div>
 
-          <div style={{ position: 'relative', paddingRight: 'clamp(16px, 6vw, 48px)' }}>
-            <div style={{
-              aspectRatio: '4/3',
-              borderRadius: 20,
-              overflow: 'hidden',
-              background: 'radial-gradient(600px 300px at 20% 0%, rgba(110,231,249,0.25), transparent 60%), radial-gradient(600px 300px at 80% 100%, rgba(167,139,250,0.25), transparent 60%)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              display: 'grid',
-              placeItems: 'center'
-            }}>
-              <div style={{
-                display: 'grid', gap: 12, gridTemplateColumns: 'repeat(2, minmax(0,1fr))', width: '86%',
-              }}>
-                {featuredCompaniesPlaceholder.slice(0,4).map(c => (
-                  <CompanyCard key={c.id} company={c} />
-                ))}
-              </div>
+          {/* Stats */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 60 }}>
+            <StatCard label="Students Registered" value={metricsPlaceholder.users} icon="" />
+            <StatCard label="Partner Companies" value={metricsPlaceholder.companies} icon="" />
+            <StatCard label="Successful Matches" value={metricsPlaceholder.matches} icon="" />
+          </div>
+
+          {/* Featured Companies Preview */}
+          <Card style={{ padding: 32 }}>
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 700, margin: "0 0 8px 0" }}>Featured Companies</h2>
+              <p style={{ color: "#6b7280", fontSize: 16 }}>Top companies actively hiring interns</p>
             </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+              {featuredCompaniesPlaceholder.slice(0, 4).map(c => (
+                <CompanyCard key={c.id} company={c} />
+              ))}
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* Dashboard quick actions */}
+      <section style={{ padding: "40px 48px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 700, margin: "0 0 8px 0" }}>Your Dashboard</h2>
+            <p style={{ color: "#6b7280", fontSize: 18 }}>Quick access to your internship journey</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
+            <QuickAction label="Applications" value={applications} href="/applications" icon="" accent="#3b82f6" />
+            <QuickAction label="Profile Views" value={profileViews} href="/profile" icon="" accent="#8b5cf6" />
+            <QuickAction label="Update Profile" value="Edit" href="/student/onboarding" icon="" accent="#10b981" />
+            <QuickAction label="Matches" value={matches} href="#ai-suggestions" icon="" accent="#f59e0b" />
+            <QuickAction label="Recommended" value={recommended} href="/recommendations" icon="" accent="#8b5cf6" />
           </div>
         </div>
       </section>
 
-      {/* Featured companies */}
-      <section id="companies" style={{ padding: '42px clamp(16px, 6vw, 48px)' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-          <h2 style={{ margin: 0 }}>Top Listed Companies</h2>
-          <a href="/companies" style={{ color: '#9aa1bf', textDecoration: 'none', fontSize: 14 }}>View all →</a>
+      {/* AI Suggestions */}
+      <section style={{ padding: "40px 48px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Card>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
+              <div>
+                <h2 style={{ fontSize: 28, fontWeight: 700, margin: "0 0 8px 0" }}>
+                   AI Recommendations {studentSkills.length ? `for ${studentSkills.join(", ")}` : ""}
+                </h2>
+                <p style={{ color: "#6b7280", fontSize: 16 }}>Personalized matches based on your skills and interests</p>
+              </div>
+              <a href="/student/onboarding" style={{ color: "#3b82f6", textDecoration: "none", fontSize: 16, fontWeight: 600 }}>Edit skills </a>
+            </div>
+
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 600, margin: "0 0 16px 0" }}>Perfect Matches</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 20 }}>
+                {exactMatches.length === 0 && (
+                  <div style={{ color: "#6b7280", fontSize: 16, textAlign: "center", padding: 40 }}>
+                    No perfect matches yet. Complete your profile to see recommendations.
+                  </div>
+                )}
+                {exactMatches.map(item => (
+                  <MatchCard key={item.id} item={item} studentSkills={studentSkills} />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 style={{ fontSize: 20, fontWeight: 600, margin: "0 0 16px 0" }}>Near Matches</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 20 }}>
+                {nearMatches.map(item => (
+                  <MatchCard key={item.id} item={item} studentSkills={studentSkills} />
+                ))}
+              </div>
+            </div>
+          </Card>
         </div>
-        <div style={{
-          marginTop: 18,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, minmax(0,1fr))',
-          gap: 16,
-        }}>
-          {featuredCompaniesPlaceholder.map(c => (
-            <CompanyCard key={c.id} company={c} />
-          ))}
+      </section>
+
+      {/* Alumni Success Stories */}
+      <section style={{ padding: "40px 48px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 700, margin: "0 0 8px 0" }}>Success Stories</h2>
+            <p style={{ color: "#6b7280", fontSize: 18 }}>Students who found their perfect internship match</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+            {pastStudents.map(s => <StudentCard key={s.id} s={s} />)}
+          </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" style={{ padding: '20px clamp(16px, 6vw, 48px) 56px' }}>
-        <h2 style={{ margin: 0 }}>How it works</h2>
-        <ol style={{
-          marginTop: 12,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, minmax(0,1fr))',
-          gap: 16,
-          listStyle: 'none',
-          counterReset: 'step'
-        }}>
-          {[
-            'Students upload resume and skills',
-            'Companies post internship requirements',
-            'AI suggests best matches for both',
-          ].map(step => (
-            <li key={step} style={{
-              position: 'relative',
-              background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 16,
-              padding: 18,
-            }}>
-              <div style={{ fontWeight: 700 }}>{step}</div>
-              <div style={{ fontSize: 13, color: '#a8adc0', marginTop: 6 }}>Our matching begins with clean inputs, then applies ranking and fit scores to present the top roles or candidates.</div>
-            </li>
-          ))}
-        </ol>
+      <section style={{ padding: "40px 48px 80px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 700, margin: "0 0 8px 0" }}>How It Works</h2>
+            <p style={{ color: "#6b7280", fontSize: 18 }}>Simple steps to your dream internship</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32 }}>
+            {[
+              { step: "1", title: "Complete Your Profile", desc: "Upload your resume, add skills, and tell us about your career interests.", icon: "" },
+              { step: "2", title: "AI Analysis", desc: "Our AI analyzes your profile and matches you with relevant opportunities.", icon: "" },
+              { step: "3", title: "Get Matched", desc: "Receive personalized recommendations and connect with companies.", icon: "" }
+            ].map(item => (
+              <Card key={item.step} style={{ textAlign: "center", padding: 32 }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>{item.icon}</div>
+                <div style={{ fontSize: 20, fontWeight: 600, marginBottom: 12 }}>{item.title}</div>
+                <div style={{ color: "#6b7280", fontSize: 16, lineHeight: 1.6 }}>{item.desc}</div>
+              </Card>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
       <footer style={{
-        padding: '18px clamp(16px, 6vw, 48px) 42px',
-        borderTop: '1px solid rgba(255,255,255,0.1)',
-        color: '#a8adc0'
+        padding: "40px 48px",
+        borderTop: "1px solid #e5e7eb",
+        background: "#f8fafc"
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-          <div>© {new Date().getFullYear()} InternMatch • Built for SIH25033</div>
-          <div style={{ display: 'flex', gap: 14 }}>
-            <a href="/privacy" style={{ color: '#a8adc0', textDecoration: 'none' }}>Privacy</a>
-            <a href="/terms" style={{ color: '#a8adc0', textDecoration: 'none' }}>Terms</a>
-            <a href="mailto:contact@internmatch.ai" style={{ color: '#a8adc0', textDecoration: 'none' }}>Contact</a>
+        <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 16, color: "#6b7280", marginBottom: 16 }}>
+             {new Date().getFullYear()} InternMatch AI  Built for SIH25033
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
+            <a href="/privacy" style={{ color: "#6b7280", textDecoration: "none", fontSize: 14 }}>Privacy</a>
+            <a href="/terms" style={{ color: "#6b7280", textDecoration: "none", fontSize: 14 }}>Terms</a>
+            <a href="mailto:contact@internmatch.ai" style={{ color: "#6b7280", textDecoration: "none", fontSize: 14 }}>Contact</a>
           </div>
         </div>
       </footer>
-
-      {/* Responsive tweaks */}
-      <style>{`
-        @media (max-width: 980px) {
-          #hero > div { grid-template-columns: 1fr; }
-          #companies > div:nth-child(2) { grid-template-columns: repeat(2, minmax(0,1fr)); }
-          #how-it-works > ol { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 560px) {
-          #companies > div:nth-child(2) { grid-template-columns: 1fr; }
-        }
-      `}</style>
     </div>
   );
 };
