@@ -16,7 +16,7 @@ const Authentication = () => {
 
     const onGoogleSuccess = async (credentialResponse) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/google/', { token: credentialResponse.credential })
+            const response = await axios.post('http://localhost:3001/api/auth/google/', { token: credentialResponse.credential })
             if (response.data.success) {
                 toast.success('Login successful')
                 navigate('/student/onboarding')
