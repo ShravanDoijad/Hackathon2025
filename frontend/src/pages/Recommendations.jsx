@@ -62,7 +62,7 @@ const Loader = () => {
 };
 
 // Company Card Component
-const CompanyCard = ({ recommendation, studentProfile, onViewDetails }) => {
+const CompanyCard = ({ recommendation, studentProfile, onViewDetails, onOpenPortal }) => {
   const { company, role, match } = recommendation;
   const isPerfect = match.score >= 90;
   const isGood = match.score >= 60 && match.score < 90;
@@ -152,9 +152,9 @@ const CompanyCard = ({ recommendation, studentProfile, onViewDetails }) => {
             background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', color: 'white',
             fontWeight: 600, cursor: 'pointer', fontSize: 14
           }}
-          onClick={() => console.log("Applied:", company.name)}
+          onClick={(e) => { e.stopPropagation(); onOpenPortal(recommendation); }}
         >
-          Apply Now
+          Open PM Portal
         </button>
         <button
           style={{
@@ -162,7 +162,7 @@ const CompanyCard = ({ recommendation, studentProfile, onViewDetails }) => {
             border: '1px solid #475569', background: 'transparent',
             color: '#cbd5e1', fontWeight: 600, cursor: 'pointer', fontSize: 14
           }}
-          onClick={() => alert(`Viewing details for ${company.name}`)}
+          onClick={(e) => { e.stopPropagation(); onViewDetails(recommendation); }}
         >
           View Details
         </button>
@@ -178,6 +178,8 @@ const Recommendations = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('match');
+  const [selectedRec, setSelectedRec] = useState(null);
+  const [skillGap, setSkillGap] = useState(null);
 
   useEffect(() => {
     const savedProfile = sessionStorage.getItem('studentProfile');
@@ -203,6 +205,27 @@ const Recommendations = () => {
       setLoading(false);
     }, 5000);
   }, [studentProfile]);
+
+  const handleOpenPortal = () => {
+    const url = 'https://pminternshipscheme.com/aicte-internship-portal/';
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleViewDetails = (rec) => {
+    setSelectedRec(rec);
+    try {
+      const gap = aiMatchingEngine.generateSkillGapAnalysis(studentProfile, rec.role);
+      setSkillGap(gap);
+    } catch (e) {
+      console.error('Skill gap analysis failed', e);
+      setSkillGap(null);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedRec(null);
+    setSkillGap(null);
+  };
 
   const sorted = useMemo(() => {
     if (!recommendations) return [];
@@ -385,8 +408,170 @@ const Recommendations = () => {
       ) : (
         <div style={{ display: 'grid', gap: 24 }}>
           {sorted.map(rec => (
-            <CompanyCard key={rec.id} recommendation={rec} studentProfile={studentProfile} onViewDetails={() => {}} />
+            <CompanyCard
+              key={rec.id}
+              recommendation={rec}
+              studentProfile={studentProfile}
+              onViewDetails={handleViewDetails}
+              onOpenPortal={handleOpenPortal}
+            />
           ))}
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {selectedRec && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50
+          }}
+          onClick={closeModal}
+        >
+          <div
+            style={{
+              background: '#0f172a', border: '1px solid #334155', borderRadius: 12,
+              width: 'min(900px, 92vw)', maxHeight: '85vh', overflowY: 'auto', padding: 20,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <img src={selectedRec.company.logo} alt={selectedRec.company.name} style={{ width: 40, height: 40, borderRadius: 8, background: 'white', objectFit: 'contain', padding: 4 }} onError={e => { e.target.style.display = 'none'; }} />
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>{selectedRec.company.name}</div>
+                  <div style={{ fontSize: 13, color: '#94a3b8' }}>{selectedRec.role.title}</div>
+                </div>
+              </div>
+              <button onClick={closeModal} style={{ background: 'transparent', border: '1px solid #475569', color: '#cbd5e1', borderRadius: 8, padding: '6px 10px', cursor: 'pointer' }}>Close</button>
+            </div>
+
+            <div style={{ display: 'grid', gap: 16 }}>
+              {/* Match Overview */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Overall Match</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ fontSize: 28, fontWeight: 800 }}>{selectedRec.match.score}%</div>
+                    <div style={{ flex: 1, height: 8, background: '#1f2937', borderRadius: 999, overflow: 'hidden' }}>
+                      <div style={{ width: `${selectedRec.match.score}%`, height: '100%', background: 'linear-gradient(90deg, #10b981, #3b82f6)' }} />
+                    </div>
+                  </div>
+                </div>
+                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Breakdown</div>
+                  {Object.entries(selectedRec.match.breakdown).map(([k, v]) => (
+                    <div key={k} style={{ marginBottom: 8 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#cbd5e1' }}>
+                        <span>{k}</span>
+                        <span>{Math.round(v)}%</span>
+                      </div>
+                      <div style={{ height: 6, background: '#1f2937', borderRadius: 999 }}>
+                        <div style={{ width: `${Math.round(v)}%`, height: '100%', background: '#60a5fa', borderRadius: 999 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Description & Responsibilities */}
+              <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: 14 }}>
+                {selectedRec.role.description && (
+                  <p style={{ fontSize: 14, color: '#e5e7eb', margin: 0 }}>{selectedRec.role.description}</p>
+                )}
+                {selectedRec.role.responsibilities && (
+                  <ul style={{ marginTop: 10, paddingLeft: 18, color: '#cbd5e1' }}>
+                    {selectedRec.role.responsibilities.map((r, i) => (
+                      <li key={i} style={{ marginBottom: 6, fontSize: 13 }}>{r}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Skills: matched vs gaps */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Your Matching Skills</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {selectedRec.match.matchedSkills.map((s, i) => (
+                      <span key={i} style={{ background: '#064e3b', color: '#a7f3d0', padding: '6px 10px', borderRadius: 999, fontSize: 12 }}>✅ {s.original}</span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: 14 }}>
+                  <div style={{ fontSize: 13, color: '#fbbf24', marginBottom: 8 }}>Skill Gaps</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {selectedRec.match.missingSkills.length === 0 ? (
+                      <span style={{ color: '#e5e7eb', fontSize: 13 }}>No major gaps 🎉</span>
+                    ) : (
+                      selectedRec.match.missingSkills.map((s, i) => (
+                        <span key={i} style={{ background: '#78350f', color: '#fde68a', padding: '6px 10px', borderRadius: 999, fontSize: 12 }}>🚀 {s.original}</span>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Learning Path / Roadmap */}
+              {skillGap && (
+                <div style={{ background: '#0b1220', border: '1px dashed #1f2937', borderRadius: 12, padding: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <div style={{ fontSize: 16, fontWeight: 700 }}>Personalized Roadmap</div>
+                    <div style={{ fontSize: 12, color: '#9ca3af' }}>ETA: {skillGap.estimatedTimeToLearn} • Confidence: {skillGap.confidence}</div>
+                  </div>
+                  <div style={{ display: 'grid', gap: 12 }}>
+                    {skillGap.learningPath.map((lp, idx) => (
+                      <div key={idx} style={{ background: '#111827', border: '1px solid #374151', borderRadius: 10, padding: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600 }}>{lp.category}</div>
+                          <div style={{ fontSize: 11, color: '#9ca3af' }}>Priority: {lp.priority.toFixed(2)}</div>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                          {lp.skills.map((s, i) => (
+                            <span key={i} style={{ background: '#312e81', color: '#c7d2fe', padding: '4px 8px', borderRadius: 999, fontSize: 11 }}>🎯 {s}</span>
+                          ))}
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          {lp.resources.map((r, i) => (
+                            <a key={i} href={`https://www.google.com/search?q=${encodeURIComponent(r)}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                              <span style={{ background: '#0e7490', color: 'white', padding: '4px 8px', borderRadius: 999, fontSize: 11 }}>📚 {r}</span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Footer Actions */}
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button
+                  style={{
+                    padding: '10px 16px', borderRadius: 8, border: 'none',
+                    background: 'linear-gradient(135deg, #60a5fa, #3b82f6)', color: 'white',
+                    fontWeight: 600, cursor: 'pointer', fontSize: 14
+                  }}
+                  onClick={() => handleOpenPortal(selectedRec)}
+                >
+                  Open PM Portal
+                </button>
+                <button
+                  style={{
+                    padding: '10px 16px', borderRadius: 8,
+                    border: '1px solid #475569', background: 'transparent',
+                    color: '#cbd5e1', fontWeight: 600, cursor: 'pointer', fontSize: 14
+                  }}
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
