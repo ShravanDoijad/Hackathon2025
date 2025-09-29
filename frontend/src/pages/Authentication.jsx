@@ -16,7 +16,7 @@ const Authentication = () => {
 
     const onGoogleSuccess = async (credentialResponse) => {
         try {
-            const response = await axios.post('http://localhost:3001/api/auth/google/', { token: credentialResponse.credential })
+            const response = await axios.post('https://hackathon2025-wa91.onrender.com/api/auth/google/', { token: credentialResponse.credential })
             if (response.data.success) {
                 toast.success('Login successful')
                 navigate('/student/onboarding')
@@ -30,7 +30,7 @@ const Authentication = () => {
 
     const onFormSubmit = async (e) => {
         e.preventDefault()
-        // TODO: replace with real email/password auth
+
         toast.success(`${mode === 'login' ? 'Login' : 'Signup'} successful`)
         navigate('/student/onboarding')
     }
