@@ -398,7 +398,7 @@ const HomePage = () => {
           </div>
 
           {/* Stats */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, marginBottom: 60 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24, marginBottom: 60 }}>
             <StatCard label="Students Registered" value={metricsPlaceholder.users} icon="" />
             <StatCard label="Partner Companies" value={metricsPlaceholder.companies} icon="" />
             <StatCard label="Successful Matches" value={metricsPlaceholder.matches} icon="" />
@@ -452,7 +452,7 @@ const HomePage = () => {
 
             <div style={{ marginBottom: 32 }}>
               <h3 style={{ fontSize: 20, fontWeight: 600, margin: "0 0 16px 0" }}>Perfect Matches</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
                 {exactMatches.length === 0 && (
                   <div style={{ color: "#6b7280", fontSize: 16, textAlign: "center", padding: 40 }}>
                     No perfect matches yet. Complete your profile to see recommendations.
@@ -466,7 +466,7 @@ const HomePage = () => {
 
             <div>
               <h3 style={{ fontSize: 20, fontWeight: 600, margin: "0 0 16px 0" }}>Near Matches</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
                 {nearMatches.map(item => (
                   <MatchCard key={item.id} item={item} studentSkills={studentSkills} />
                 ))}
