@@ -38,7 +38,7 @@ const Authentication = () => {
     return (
         <div className="min-h-dvh bg-gradient-to-br from-indigo-950/60 to-slate-950 grid place-items-center p-4">
             <div className="w-full max-w-xl rounded-2xl border border-white/15 bg-white/5 backdrop-blur p-6">
-                <h1 className="text-2xl font-extrabold">Welcome to InternQuest</h1>
+                <h1 className="text-2xl font-extrabold">Welcome to InternSathi</h1>
                 <div className="text-slate-300 mb-3">Log in or create your account</div>
 
                 <div className="flex gap-2 mb-4">

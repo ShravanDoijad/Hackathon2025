@@ -154,7 +154,7 @@ const CompanyCard = ({ recommendation, studentProfile, onViewDetails, onOpenPort
           }}
           onClick={(e) => { e.stopPropagation(); onOpenPortal(recommendation); }}
         >
-          Open InternQuest Hub
+          Open InternSathi Hub
         </button>
         <button
           style={{
@@ -557,7 +557,7 @@ const Recommendations = () => {
                   }}
                   onClick={() => handleOpenPortal(selectedRec)}
                 >
-                  Open InternQuest Hub
+                  Open InternSathi Hub
                 </button>
                 <button
                   style={{

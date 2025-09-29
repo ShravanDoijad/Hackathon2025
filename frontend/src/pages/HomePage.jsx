@@ -338,7 +338,7 @@ const HomePage = () => {
             fontSize: 16
           }}></div>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 700 }}>InternQuest</div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>InternSathi</div>
             <div style={{ fontSize: 12, color: "#6b7280" }}>Smart AI Internship Engine</div>
           </div>
         </div>
@@ -520,7 +520,7 @@ const HomePage = () => {
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
           <div style={{ fontSize: 16, color: "#6b7280", marginBottom: 16 }}>
-            {new Date().getFullYear()} InternQuest  Built for SIH25033
+            {new Date().getFullYear()} InternSathi  Built for SIH25033
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
             <a href="/privacy" style={{ color: "#6b7280", textDecoration: "none", fontSize: 14 }}>Privacy</a>
